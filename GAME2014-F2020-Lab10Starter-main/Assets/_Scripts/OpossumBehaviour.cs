@@ -91,7 +91,6 @@ public class OpossumBehaviour : MonoBehaviour
                         _FlipX();
    
                 }
-
                 rampDirection = RampDirection.DOWN;
             }
             else
@@ -146,11 +145,11 @@ public class OpossumBehaviour : MonoBehaviour
                     rigidbody2D.AddForce(Vector2.down * runForce * 0.25f * Time.deltaTime);
                 }
 
-                StartCoroutine(Rotate());
+                //StartCoroutine(Rotate());
             }
             else
             {
-                StartCoroutine(Normalize());
+               // StartCoroutine(Normalize());
             }
             
 
@@ -158,7 +157,7 @@ public class OpossumBehaviour : MonoBehaviour
         }
         else if (onRamp)
         {
-            StartCoroutine(Rotate());
+           // StartCoroutine(Rotate());
         }
         else
         {

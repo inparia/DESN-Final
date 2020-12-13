@@ -317,7 +317,6 @@ public class PlayerBehaviour : MonoBehaviour
 
         if (other.gameObject.CompareTag("Bullet"))
         {
-            LoseLife();
         }
 
         if (other.gameObject.CompareTag("Water"))
@@ -354,6 +353,11 @@ public class PlayerBehaviour : MonoBehaviour
             m_rigidBody2D.gravityScale = 5.0f;
             isInWater = false;
         }
+
+        if (collision.gameObject.CompareTag("Bullet"))
+        {
+            LoseLife();
+        }
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -361,7 +365,7 @@ public class PlayerBehaviour : MonoBehaviour
         {
             if (m_rigidBody2D.position.y > other.gameObject.GetComponent<Rigidbody2D>().position.y + 1)
             {
-                m_rigidBody2D.AddForce(Vector2.up * verticalForce);
+                m_rigidBody2D.AddForce(Vector2.up * verticalForce / 2);
                 other.gameObject.SetActive(false);
                 isJumping = true;
                 sounds[(int)ImpulseSounds.JUMP].Play();
