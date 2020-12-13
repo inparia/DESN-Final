@@ -13,16 +13,19 @@ public class SceneController : MonoBehaviour
         {
             case 1:
                 SceneManager.LoadScene("Platformer");
+                SoundManager.Instance.Play("Button");
                 break;
             case 2:
                 SceneManager.LoadScene("Start");
+                SoundManager.Instance.Play("Button");
                 break;
             case 3:
+                SceneManager.LoadScene("Instruction");
+                SoundManager.Instance.Play("Button");
                 break;
             case 4:
                 Application.Quit();
-                break;
-            default:
+                SoundManager.Instance.Play("Button");
                 break;
     }
     }

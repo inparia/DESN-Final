@@ -65,6 +65,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     public Text saveText;
     private bool dispText;
+    private bool victory;
     private float timeRemaining = 5, anotherTimeRemaining = 5;
     // Start is called before the first frame update
     void Start()
@@ -94,12 +95,13 @@ public class PlayerBehaviour : MonoBehaviour
             if (Time.timeScale == 1)
             {
                 Time.timeScale = 0f;
-                Debug.Log("Paused");
+                saveText.text = "Paused.\nPress 'P' to resume.";
+                saveText.gameObject.SetActive(true);
             }
             else
             {
                 Time.timeScale = 1f;
-                Debug.Log("Resumed");
+                saveText.gameObject.SetActive(false);
             }
         }
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -142,6 +144,20 @@ public class PlayerBehaviour : MonoBehaviour
         else
         {
             saveText.gameObject.SetActive(false);
+        }
+
+        if (victory)
+        {
+            if (anotherTimeRemaining > 0)
+            {
+                anotherTimeRemaining -= Time.deltaTime;
+            }
+            else
+            {
+                
+                SceneManager.LoadScene("Win");
+                SoundManager.Instance.Play("BGM");
+            }
         }
     }
 
@@ -301,23 +317,32 @@ public class PlayerBehaviour : MonoBehaviour
 
         if (other.gameObject.CompareTag("Bullet"))
         {
-            TakeDamage(10);
+            LoseLife();
         }
 
         if (other.gameObject.CompareTag("Water"))
         {
-            m_rigidBody2D.gravityScale = 1.0f;
+            m_rigidBody2D.gravityScale = 0.5f;
             isInWater = true;
         }
 
         if(other.gameObject.CompareTag("Goal"))
         {
-            SceneManager.LoadScene("End");
+            if (!victory)
+            {
+                SoundManager.Instance.Play("Victory");
+                SoundManager.Instance.Stop("BGM");
+                victory = true;
+                GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+                foreach (GameObject enemy in enemies)
+                    GameObject.Destroy(enemy);
+            }
         }
         if (other.gameObject.CompareTag("SavePoint") && !other.gameObject.GetComponent<SavePoint>().savePointEnabled)
         {
             other.gameObject.GetComponent<SavePoint>().savePointEnabled = true;
             spawnPoint.position = other.gameObject.transform.position;
+            saveText.text = "Save Point Activated.";
             dispText = true;
         }
     }
@@ -326,7 +351,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Water"))
         {
-            m_rigidBody2D.gravityScale = 10.0f;
+            m_rigidBody2D.gravityScale = 5.0f;
             isInWater = false;
         }
     }
@@ -343,21 +368,15 @@ public class PlayerBehaviour : MonoBehaviour
             }
             else
             {
-                TakeDamage(15);
+                LoseLife();
+
             }
         }
     }
 
     private void OnCollisionStay2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
-        {
-            // Damage Delay
-            if (Time.frameCount % 20 == 0)
-            {
-                TakeDamage(5);
-            }
-        }
+        
     }
 
     public void LoseLife()
@@ -365,7 +384,7 @@ public class PlayerBehaviour : MonoBehaviour
         lives -= 1;
 
         sounds[(int) ImpulseSounds.DIE].Play();
-        
+        ShakeCamera();
         livesHUD.SetInteger("LivesState", lives);
 
         if (lives > 0)
@@ -388,7 +407,7 @@ public class PlayerBehaviour : MonoBehaviour
 
         PlayRandomHitSound();
 
-        ShakeCamera();
+        
 
         if (health <= 0)
         {
