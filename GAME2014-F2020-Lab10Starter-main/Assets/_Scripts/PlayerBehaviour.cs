@@ -363,9 +363,9 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
-            if (m_rigidBody2D.position.y > other.gameObject.GetComponent<Rigidbody2D>().position.y + 1)
+            if (m_rigidBody2D.position.y > other.gameObject.GetComponent<Rigidbody2D>().position.y + 0.5f)
             {
-                m_rigidBody2D.AddForce(Vector2.up * verticalForce / 2);
+                m_rigidBody2D.AddForce(Vector2.up * verticalForce / 1.5f);
                 other.gameObject.SetActive(false);
                 isJumping = true;
                 sounds[(int)ImpulseSounds.JUMP].Play();
